@@ -1,28 +1,48 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-navigation-drawer app>
+      <!-- -->
+    </v-navigation-drawer>
+
+    <v-app-bar app flat white>
+      <v-container class="mobile-preset">
+        <!-- -->
+      </v-container>
+    </v-app-bar>
+
+    <v-main>
+      <v-container class="mobile-preset">
+        <div style="display:none">
+          <Contacts></Contacts>
+        </div>
+        <!-- <router-view></router-view> -->
+      </v-container>
+    </v-main>
+
+    <v-footer app>
+      <v-container class="mobile-preset">
+        <!-- -->
+      </v-container>
+    </v-footer>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Contacts from './components/Contacts'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    Contacts
+  },
+  data: () => ({
+  }),
+  methods: {}
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  .mobile-preset {
+    max-width: 700px;
+  }
 </style>
