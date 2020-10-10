@@ -4,7 +4,7 @@
       <!-- -->
     </v-navigation-drawer>
 
-    <v-app-bar app flat white
+    <v-app-bar app flat white class="animate-nav"
       v-if="this.$router.currentRoute.path != '/start' && this.$router.currentRoute.path != '/create'
          && this.$router.currentRoute.path != '/create/invite-players'">
       <v-container class="mobile-preset">
@@ -88,5 +88,10 @@ export default {
     animation-duration: 0.2 s;
     animation-fill-mode: both;
     animation-name: fadeInRight;
+  }
+
+  .animate-nav{
+    animation-delay: 1.5s;
+    transition: 0.2s;
   }
 </style>

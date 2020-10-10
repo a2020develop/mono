@@ -4,14 +4,8 @@
         <div class="invite-players-qr">
           <div class="titled">
               <div class="set-up">
-                <div class="ico-marg">
-                  <v-icon v-anime="{ translateY: -5, duration: 1600, loop: true, direction: 'alternate' }">mdi-account-reactivate</v-icon>
-                </div>
                 <div>{{ translateToLang.waiting4players[currentLang] }}</div>
               </div>
-          </div>
-          <div class="code">
-            <qrcode-vue :value="'https://' + host + '/join/' + room" :size="240" level="H"></qrcode-vue>
           </div>
           <div class="players">
             <v-list subheader two-line>
@@ -32,15 +26,23 @@
                 <v-list-item-action>
                   <v-btn icon :disabled="player.card_holder == 'The Bank' || player.id == me"
                     v-on:click="removePlayer(player.id)">
-                    <v-icon color="grey lighten-1">mdi-account-remove-outline</v-icon>
+                    <v-icon color="grey lighten-1">mdi-check</v-icon>
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>
             </v-list>
 
             <div class="start-game">
+                <div class="hidden-load" v-if="loading">
+                    <v-icon color="primary" v-anime="{ rotate: 1001010, duration: 1600000, loop: true, easing: 'linear'}">mdi-loading</v-icon>
+                </div>
+            </div>
+            
+            {{ room }}
+            <div class="start-game">
               <v-btn depressed v-on:click="startTheGame()">{{ translateToLang.start_the_game[currentLang] }}</v-btn>
             </div>
+
           </div>
         </div>
     </div>
@@ -55,17 +57,13 @@
 </template>
 
 <script>
-import QrcodeVue from 'qrcode.vue'
 import firebase from '../firebase'
 const db = firebase.database()
 
 export default {
-  name: 'InvitePlayers',
+  name: 'JoinGame',
   firebase: {
     players: db.ref().child('players')
-  },
-  components: {
-    QrcodeVue
   },
   data: () => ({    
     host: '',
@@ -83,18 +81,6 @@ export default {
     },
     getMe() {
       this.me = localStorage.getItem('player')
-    },
-    removePlayer(id) {
-      firebase.database().ref('players/' + id).update({
-        room: ''
-      })
-    },
-    startTheGame() {
-      firebase.database().ref('rooms/' + this.room).update({
-        is_game_started: 'true'
-      })
-      
-      this.$router.push('/wallet')
     }
   },
   mounted() {

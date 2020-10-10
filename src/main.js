@@ -23,7 +23,8 @@ const router = new VueRouter({
     { path: '/', redirect: '/start' },
     { path: '/start', component: () => import('./views/Start') },
     { path: '/create', component: () => import('./views/NewGame') },
-    { path: '/create/invite-players', component: () => import('./views/InvitePlayers') }
+    { path: '/create/invite-players', component: () => import('./views/InvitePlayers') },
+    { path: '/join/:room', component: () => import('./views/JoinGame') }
   ]
 })
 
@@ -63,6 +64,18 @@ Vue.mixin({
           err501: {
             ru: 'Ой, что-то пошло не по плану',
             en: 'Oops, something went wrong'
+          },
+          ready_to_play: {
+            ru: 'Готов к игре',
+            en: 'Ready to play'
+          },
+          waiting4players: {
+            ru: 'Ожидаем игроков',
+            en: 'Waiting for players'
+          },
+          start_the_game: {
+            ru: 'Начать игру',
+            en: 'Start the game'
           }
         }
       },
