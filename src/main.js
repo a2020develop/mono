@@ -83,6 +83,10 @@ Vue.mixin({
             ru: 'Присоединиться к игре',
             en: 'Join the game'
           },
+          taxes_included: {
+            ru: 'Все налоги включены',
+            en: 'All taxes included'
+          }
         }
       },
       get currentLang() {
