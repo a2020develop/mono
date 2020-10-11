@@ -14,7 +14,7 @@
             <div class="absoluted-apply">
                 <v-btn icon color="primary" v-on:click="createGame()"><v-icon>mdi-check</v-icon></v-btn>
             </div>
-            <router-link to="/start">🠐 {{ translateToLang.back[currentLang] }}</router-link>
+            <router-link to="/start"><v-icon class="back-arrow">mdi-arrow-left</v-icon> {{ translateToLang.back[currentLang] }}</router-link>
         </div>
     </div>
 </template>

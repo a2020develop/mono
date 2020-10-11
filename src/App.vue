@@ -4,11 +4,9 @@
       <!-- -->
     </v-navigation-drawer>
 
-    <v-app-bar app flat white class="animate-nav"
-      v-if="this.$router.currentRoute.path != '/start' && this.$router.currentRoute.path != '/create'
-         && this.$router.currentRoute.path != '/create/invite-players'">
+    <v-app-bar app flat white class="animate-nav">
       <v-container class="mobile-preset">
-        <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon> -->
+        <v-app-bar-nav-icon small v-on:click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       </v-container>
     </v-app-bar>
 
@@ -28,7 +26,6 @@
 export default {
   name: 'App',
   components: {
-    // Contacts,
   },
   data: () => ({
     drawer: false,
@@ -44,10 +41,17 @@ export default {
 </script>
 
 <style>
+  a {
+    text-decoration: unset !important
+  }
+
+  .back-arrow {
+    margin-top: -3px;
+  }
   .mobile-preset {
-    width: 100%;
-    max-width: 700px;
-    overflow: hidden;
+    width: 100% !important;
+    max-width: 700px !important;
+    overflow: hidden !important;
   }
 
   @keyframes fadeInRight {
@@ -93,5 +97,7 @@ export default {
   .animate-nav{
     animation-delay: 1.5s;
     transition: 0.2s;
+    position: fixed;
+    top: 0;
   }
 </style>

@@ -24,7 +24,9 @@ const router = new VueRouter({
     { path: '/start', component: () => import('./views/Start') },
     { path: '/create', component: () => import('./views/NewGame') },
     { path: '/create/invite-players', component: () => import('./views/InvitePlayers') },
-    { path: '/join/:room', component: () => import('./views/JoinGame') }
+    { path: '/room/:room', component: () => import('./views/RoomView') },
+    { path: '/join/:room', component: () => import('./views/JoinGame') },
+    { path: '/wallet', component: () => import('./views/Wallet') }
   ]
 })
 
@@ -76,7 +78,11 @@ Vue.mixin({
           start_the_game: {
             ru: 'Начать игру',
             en: 'Start the game'
-          }
+          },
+          join_the_game: {
+            ru: 'Присоединиться к игре',
+            en: 'Join the game'
+          },
         }
       },
       get currentLang() {

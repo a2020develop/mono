@@ -1,59 +1,22 @@
 <template>
-  <div>
-    <div v-if="host.length > 0 && room">
-        <div class="invite-players-qr">
-          <div class="titled">
-              <div class="set-up">
-                <div>{{ translateToLang.waiting4players[currentLang] }}</div>
-              </div>
-          </div>
-          <div class="players">
-            <v-list subheader two-line>
-              <v-list-item v-for="player in filteredPlayers" :key="player.id" class="p-0">
-                <v-list-item-avatar color="primary">
-                  <span class="white--text headline fs-20">{{ player.card_holder.substr(0, 1) }}</span>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title v-text="player.card_holder"></v-list-item-title>
-                  <v-list-item-subtitle>
-                    <span>
-                      <v-icon class="fs-20" color="success">mdi-check</v-icon>
-                    </span>
-                    <span>{{ translateToLang.ready_to_play[currentLang] }}</span>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-action>
-                  <v-btn icon :disabled="player.card_holder == 'The Bank' || player.id == me"
-                    v-on:click="removePlayer(player.id)">
-                    <v-icon color="grey lighten-1">mdi-check</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
-
-            <div class="start-game">
+    <div class="new-game">
+        <div class="fluid">
+            <div class="titled">
+                <h1 class="set-up">{{ translateToLang.lets_set[currentLang] }}</h1>
                 <div class="hidden-load" v-if="loading">
-                    <v-icon color="primary" v-anime="{ rotate: 1001010, duration: 1600000, loop: true, easing: 'linear'}">mdi-loading</v-icon>
+                    <v-icon color="primary" v-anime="{ rotate: 1001010, duration: 900000, loop: true, easing: 'linear'}">mdi-loading</v-icon>
                 </div>
             </div>
-            
-            {{ room }}
-            <div class="start-game">
-              <v-btn depressed v-on:click="startTheGame()">{{ translateToLang.start_the_game[currentLang] }}</v-btn>
+            <v-text-field
+                v-model="namefield" outlined
+                :label="translateToLang.whats_ur_name[currentLang]"
+            ></v-text-field>
+            <div class="absoluted-apply">
+                <v-btn icon color="primary" v-on:click="joinGame()"><v-icon>mdi-check</v-icon></v-btn>
             </div>
-
-          </div>
+            <router-link to="/start"><v-icon class="back-arrow">mdi-arrow-left</v-icon> {{ translateToLang.back[currentLang] }}</router-link>
         </div>
     </div>
-    <div v-else class="invite-players">
-      <div>
-        <h1>501</h1>
-        <div>{{ translateToLang.err501[currentLang] }}</div>
-        <router-link to="/start">🠐 {{ translateToLang.back[currentLang] }}</router-link>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -61,104 +24,134 @@ import firebase from '../firebase'
 const db = firebase.database()
 
 export default {
-  name: 'JoinGame',
-  firebase: {
-    players: db.ref().child('players')
-  },
-  data: () => ({    
-    host: '',
-    room: '',
-    players: [],
-    me: '',
-    loading: true
-  }),
-  methods: {
-    getHost() {
-      this.host = window.location.host
+    name: 'JoinGame',
+    firebase: {
+        players: db.ref().child('players'),
+        rooms: db.ref().child('rooms')
     },
-    getRoom() {
-      this.room = localStorage.getItem('room')
-    },
-    getMe() {
-      this.me = localStorage.getItem('player')
-    }
-  },
-  mounted() {
-    this.getHost()
-    this.getRoom()
-    this.getMe()
-  },
-  computed: {
-    filteredPlayers: function () {
-      let filtered = []
-      for (let index = 0; index < this.players.length; index++) {
-        const player = this.players[index]
+    data: () => ({
+        namefield: '',
+        players: [],
+        rooms: [],
+        room: '',
+        player: '',
+        bank: '',
+        bank_account: '',
+        loading: false
+    }),
+    methods: {
+        joinGame() {
+            this.loading = true
 
-        if (player.room == this.room) {
-          filtered.push(player)
+            if(this.namefield != '') {
+                let gameroom = this.getRoom()
+                this.room = gameroom
+
+                let controlling_by = this.createPlayer(this.namefield, gameroom)
+                this.createBankAccount(controlling_by, controlling_by)
+                this.saveLocalConfig()
+
+                firebase.database().ref('players/' + controlling_by).update({
+                    room: gameroom
+                })
+
+                setTimeout(() => { 
+                    this.loading = false;
+                    this.$router.push('/room/' + this.room)
+                }, 2000)
+            } 
+            else { 
+                this.loading = false
+                return 
+            }
+        },
+        getHost() {
+            this.host = window.location.host
+        },
+        getRoom() {
+            return this.$route.params.room
+        },
+        getMe() {
+            this.me = localStorage.getItem('player')
+        },
+        startTheGame() {
+            this.$router.push('/wallet')
+        },
+        saveLocalConfig() {
+            localStorage.setItem('room', this.room)
+            localStorage.setItem('player', this.player)
+        },
+        createPlayer(name, room) {
+            this.player = this.generateRandom()
+            firebase.database().ref('players/' + this.player).set({
+                id: this.player,
+                card_holder: name,
+                room: room
+            })
+
+            return this.player
+        },
+        createBankAccount(owner_id, controlling_by, account_balance = 5000000) {
+            let account = ''
+            if(owner_id == controlling_by) {
+                this.bank_account = this.generateRandom()
+                account = this.bank_account
+            } else {
+                account = this.generateRandom()
+            }
+
+            firebase.database().ref('bank_accounts/' + account).set({
+                id: account,
+                account_balance: account_balance,
+                account_controlling_by: controlling_by,
+                account_owner_id: owner_id,
+                account_number: "4441 " + Math.round(Math.random() * (9999 - 1000) + 1000) + " 0101 " + Math.round(Math.random() * (9999 - 1000) + 1000),
+            })
+
+            return account
+        },
+        generateRandom(length = 20) {
+            let result = ''
+            let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+            for ( let i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length))
+            }
+            return result
         }
-      }
-      return filtered
-    }
-  }
+    },
+    mounted() {}
 }
 </script>
 
 <style scoped>
-  .invite-players {
-    height: 95vh;
-    display: flex;    
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-  }
+    .new-game {
+        height: 95vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
 
-  .invite-players-qr .code{
-    display: flex;    
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .invite-players-qr .players {
-    max-width: 250px;
-    margin: auto;
-  }
-
-  .p-0 {
-    padding: 0 !important;
-  }
-
-  .fs-20 {
-    font-size: 20px!important;
-  }
-  .titled {
-    display: flex;
-    max-width: 250px;
-    margin: auto;
-    margin-top: 30px;
-    padding: 0 3px;
-  }
-
-  .titled .set-up {
-    display: flex;
-    align-items: center;
-  }
-
-  .titled .set-up{
-    width: calc(100% - 24px);
-    font-size: 20px;
-    color: #444141;
-    font-weight: 400;
-  }
-
-  .ico-marg {
-    margin-top: 5px;
-    padding-right: 4px;
-  }
-
-  .start-game{
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
+    h1.set-up {
+        font-size: 20px;
+        width: 100%;
+        margin-bottom: 5px;
+        color: #444141;
+        font-weight: 400;
+    }
+    .fluid{
+        width: 100%;
+        font-weight: 400;
+        position: relative;
+    }
+    .absoluted-apply > .v-btn{
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin-top: 45px;
+        margin-right: 10px;
+    }
+    .titled {
+        display: flex;
+    }
 </style>
