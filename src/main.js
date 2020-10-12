@@ -85,7 +85,15 @@ Vue.mixin({
           },
           taxes_included: {
             ru: 'Все налоги включены',
-            en: 'All taxes included'
+            en: 'All taxes are included'
+          },
+          money_transfer: {
+            ru: 'Денежный перевод',
+            en: 'Money transfer'
+          },
+          choose_from_contacts: {
+            ru: 'Выберите получателя из ваших контактов',
+            en: 'Choose a recipient from your contacts'
           }
         }
       },

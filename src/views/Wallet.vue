@@ -1,10 +1,10 @@
 <template>
-    <div :style="`width: calc(${oneScreen}px * 2)`">
-        <div v-for="acc in myAccounts" :key="acc.id" :style="`width: ${oneScreen}px`" class="account-box">
+    <div>
+        <div v-for="acc in myAccounts" :key="acc.id" class="account-box">
             <div class="my-balance">
                 <div class="b"><small>$</small>{{ formatPrice(acc.account_balance) }}</div>
                 <div class="ml"><v-icon>mdi-cog</v-icon></div>
-                <div class="taxes-included">All taxes are included</div>
+                <div class="taxes-included">{{ translateToLang.taxes_included[currentLang] }}</div>
             </div>
             <div class="card black-card">
                 <div class="card-body">
@@ -25,6 +25,44 @@
                     </div>
                     <img src="../../public/visa.png" class="visa">
                 </div>
+            </div>
+            <div class="transfer">
+                <v-dialog v-model="dialog" persistent max-width="350">
+                    <template v-slot:activator="{ on, attrs }">
+                        <div class="transfer-dialog" dark v-bind="attrs" v-on="on">
+                            <div class="transfer-dialog--inner">
+                                <h2>{{ translateToLang.money_transfer[currentLang] }}</h2>
+                                <div>
+                                    <small>{{ translateToLang.choose_from_contacts[currentLang] }}</small>
+                                </div>
+                            </div>
+                            <v-icon>mdi-bank-transfer</v-icon>
+                        </div>
+                    </template>
+                    <v-card>
+                        <v-card-title class="headline">
+                            Use Google's location service?
+                        </v-card-title>
+                        <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                                color="green darken-1"
+                                text
+                                @click="dialog = false"
+                            >
+                                Disagree
+                            </v-btn>
+                            <v-btn
+                                color="green darken-1"
+                                text
+                                @click="dialog = false"
+                            >
+                                Agree
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </div>
             <div class="transactions">
                 <v-list-item v-for="myTransaction in myTransactions" :key="myTransaction.id">
@@ -78,7 +116,8 @@ export default {
     accounts: [],
     player_transactions: [],
     oneScreen: window.innerWidth - 25,
-    currenSwipeState: 1
+    currenSwipeState: 1,
+    dialog: false
   }),
   methods: {
     findOwnerName(id) {
@@ -131,7 +170,9 @@ export default {
 
   },
   mounted() {
-    
+    if (!localStorage.getItem('player')) {
+        this.$router.push('/start')
+    }
   }
 }
 </script>
@@ -169,6 +210,9 @@ export default {
         display: flex;
         align-items: center;
     }
+    .card {
+        padding-top: 5px;
+    }
 
     .black-card .card-body {
         background: black;
@@ -201,9 +245,10 @@ export default {
 
     .account-box{
         float: left;
+        min-width: 305px;
     }
     .my-balance{
-        padding: 8px 17px;
+        padding: 8px 1px;
         font-weight: 500;
         font-size: 25px;
         color: #484848;
@@ -232,5 +277,38 @@ export default {
         padding: 0;
         padding-left: 3px;
         padding-right: 2px;
+    }
+    .transfer {
+        width: 100%;
+        min-height: 45px;
+        border-radius: 10px;
+        background: #1867c0;
+        margin-top: 15px !important;
+        margin-bottom: 15px !important;
+        padding: 7px 15px;
+        color: white;
+    }
+
+    .transfer-dialog {
+        display: flex;
+    }
+
+    .transfer-dialog .v-icon {
+        margin-left: auto;
+        color: white;
+    }
+
+    .transfer-dialog h2{
+        text-transform: uppercase;
+        font-weight: 300;
+        line-height: 10px;
+        padding-top: 8px;
+        font-size: 18px;
+    }
+
+    .my-balance, .card-body, .transactions, .transfer {
+        max-width: 315px;
+        margin: 0 auto;
+        width: 100%;
     }
 </style>
