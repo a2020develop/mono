@@ -6,12 +6,14 @@ import VueAxios from 'vue-axios'
 import VueAnime from 'vue-animejs'
 import VueRouter from 'vue-router'
 import VuePageTransition from 'vue-page-transition'
+import VueCarousel from 'vue-carousel'
 import vuetify from './plugins/vuetify'
 import { rtdbPlugin } from 'vuefire'
 
 Vue.use(VueAnime)
 Vue.use({VueAxios, axios})
 Vue.use(VuePageTransition)
+Vue.use(VueCarousel)
 Vue.use(rtdbPlugin)
 Vue.use(VueRouter)
 Vue.use(Vuex)

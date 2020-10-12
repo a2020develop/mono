@@ -1,103 +1,107 @@
 <template>
-    <div>
-        <div v-for="acc in myAccounts" :key="acc.id" class="account-box">
-            <div class="my-balance">
-                <div class="b"><small>$</small>{{ formatPrice(acc.account_balance) }}</div>
-                <div class="ml"><v-icon>mdi-cog</v-icon></div>
-                <div class="taxes-included">{{ translateToLang.taxes_included[currentLang] }}</div>
-            </div>
-            <div class="card black-card">
-                <div class="card-body">
-                    <div class="card-body--inner">
-                        <div class="card-name">
-                            <div class="card-name--inner">
-                                <h2 class="font-weight-light">MONO POLY BANK</h2> 
-                                <div class="first-bank">1st VIRTUAL BANK</div>
-                            </div>
-                        </div>
-                        <img src="../../public/chip.png" class="chip">
-                        <div class="card-number">
-                            <h2>{{ acc.account_number }}</h2>
-                        </div>
-                        <div class="card-holder">
-                            <h2>{{ findOwnerName(acc.account_owner_id) }}</h2>
-                        </div>
-                    </div>
-                    <img src="../../public/visa.png" class="visa">
+    <div class="my-wallets">
+        <carousel>
+            <slide v-for="acc in myAccounts" :key="acc.id">
+            <div class="account-box">
+                <div class="my-balance">
+                    <div class="b"><small>$</small>{{ formatPrice(acc.account_balance) }}</div>
+                    <div class="ml"><v-icon>mdi-cog</v-icon></div>
+                    <div class="taxes-included">{{ translateToLang.taxes_included[currentLang] }}</div>
                 </div>
-            </div>
-            <div class="transfer">
-                <v-dialog v-model="dialog" persistent max-width="350">
-                    <template v-slot:activator="{ on, attrs }">
-                        <div class="transfer-dialog" dark v-bind="attrs" v-on="on">
-                            <div class="transfer-dialog--inner">
-                                <h2>{{ translateToLang.money_transfer[currentLang] }}</h2>
-                                <div>
-                                    <small>{{ translateToLang.choose_from_contacts[currentLang] }}</small>
+                <div class="card black-card">
+                    <div class="card-body">
+                        <div class="card-body--inner">
+                            <div class="card-name">
+                                <div class="card-name--inner">
+                                    <h2 class="font-weight-light">MONO POLY BANK</h2> 
+                                    <div class="first-bank">1st VIRTUAL BANK</div>
                                 </div>
                             </div>
-                            <v-icon>mdi-bank-transfer</v-icon>
+                            <img src="../../public/chip.png" class="chip">
+                            <div class="card-number">
+                                <h2>{{ acc.account_number }}</h2>
+                            </div>
+                            <div class="card-holder">
+                                <h2>{{ findOwnerName(acc.account_owner_id) }}</h2>
+                            </div>
                         </div>
-                    </template>
-                    <v-card>
-                        <v-card-title class="headline">
-                            Use Google's location service?
-                        </v-card-title>
-                        <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn
-                                color="green darken-1"
-                                text
-                                @click="dialog = false"
-                            >
-                                Disagree
-                            </v-btn>
-                            <v-btn
-                                color="green darken-1"
-                                text
-                                @click="dialog = false"
-                            >
-                                Agree
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </div>
-            <div class="transactions">
-                <v-list-item v-for="myTransaction in myTransactions" :key="myTransaction.id">
-                    
-                    <v-list-item-avatar v-if="myTransaction.type == 'min'" color="primary" class="white--text">
-                        {{ findOwnerName(myTransaction.transaction_to).substr(0,1) || 'A' }}
-                    </v-list-item-avatar>
-                    <v-list-item-avatar v-else color="primary" class="white--text">
-                        {{ findOwnerName(myTransaction.transaction_from).substr(0,1) || 'A' }}
-                    </v-list-item-avatar>
-
-                    <v-list-item-content>
-                        <v-list-item-title>
-                            <span v-if="myTransaction.type == 'min'">-</span>
-                            <span v-else>+</span>
-                            {{ formatPrice(myTransaction.transaction_amount) }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle>
-                            Bank transfer from
-                            <span v-if="myTransaction.type == 'min'">{{ findOwnerName(myTransaction.transaction_to) || 'Anonymous' }}</span>
-                            <span v-else>{{ findOwnerName(myTransaction.transaction_from) || 'Anonymous' }}</span>
-                        </v-list-item-subtitle>
-                    </v-list-item-content>
-
-                    <v-list-item-action>
+                        <img src="../../public/visa.png" class="visa">
+                    </div>
+                </div>
+                <div class="transfer">
+                    <v-dialog v-model="dialog" persistent max-width="350">
+                        <template v-slot:activator="{ on, attrs }">
+                            <div class="transfer-dialog" dark v-bind="attrs" v-on="on">
+                                <div class="transfer-dialog--inner">
+                                    <h2>{{ translateToLang.money_transfer[currentLang] }}</h2>
+                                    <div>
+                                        <small>{{ translateToLang.choose_from_contacts[currentLang] }}</small>
+                                    </div>
+                                </div>
+                                <v-icon>mdi-bank-transfer</v-icon>
+                            </div>
+                        </template>
+                        <v-card>
+                            <v-card-title class="headline">
+                                Use Google's location service?
+                            </v-card-title>
+                            <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    color="green darken-1"
+                                    text
+                                    @click="dialog = false"
+                                >
+                                    Disagree
+                                </v-btn>
+                                <v-btn
+                                    color="green darken-1"
+                                    text
+                                    @click="dialog = false"
+                                >
+                                    Agree
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </div>
+                <div class="transactions">
+                    <v-list-item v-for="myTransaction in myTransactions" :key="myTransaction.id">
                         
-                    </v-list-item-action>
-                </v-list-item>
-            </div>
-        </div>
+                        <v-list-item-avatar v-if="myTransaction.type == 'min'" color="primary" class="white--text">
+                            {{ findOwnerName(myTransaction.transaction_to).substr(0,1) || 'A' }}
+                        </v-list-item-avatar>
+                        <v-list-item-avatar v-else color="primary" class="white--text">
+                            {{ findOwnerName(myTransaction.transaction_from).substr(0,1) || 'A' }}
+                        </v-list-item-avatar>
 
+                        <v-list-item-content>
+                            <v-list-item-title>
+                                <span v-if="myTransaction.type == 'min'">-</span>
+                                <span v-else>+</span>
+                                {{ formatPrice(myTransaction.transaction_amount) }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                                Bank transfer from
+                                <span v-if="myTransaction.type == 'min'">{{ findOwnerName(myTransaction.transaction_to) || 'Anonymous' }}</span>
+                                <span v-else>{{ findOwnerName(myTransaction.transaction_from) || 'Anonymous' }}</span>
+                            </v-list-item-subtitle>
+                        </v-list-item-content>
+
+                        <v-list-item-action>
+                            
+                        </v-list-item-action>
+                    </v-list-item>
+                </div>
+            </div>
+            </slide>
+        </carousel>
     </div>
 </template>
 
 <script>
+import { Carousel, Slide } from 'vue-carousel'
 import firebase from '../firebase'
 const db = firebase.database()
 
@@ -109,6 +113,10 @@ export default {
     accounts: db.ref().child('bank_accounts'),
     player_transactions: db.ref().child('player_transactions'),
     rooms: db.ref().child('rooms')
+  },
+  components: {
+    Carousel,
+    Slide
   },
   data: () => ({
     player: [],
@@ -244,7 +252,6 @@ export default {
     }
 
     .account-box{
-        float: left;
         min-width: 305px;
     }
     .my-balance{
