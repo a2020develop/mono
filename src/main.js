@@ -96,7 +96,27 @@ Vue.mixin({
           choose_from_contacts: {
             ru: 'Выберите получателя из ваших контактов',
             en: 'Choose a recipient from your contacts'
-          }
+          },
+          recipient: {
+            ru: 'Получатель',
+            en: 'Recipient'
+          },
+          amount: {
+            ru: 'Сумма',
+            en: 'Amount'
+          },
+          bank_transfer: {
+            ru: 'Банковский перевод',
+            en: 'Bank transfer'
+          },
+          from: {
+            ru: 'от',
+            en: 'from'
+          },
+          to: {
+            ru: 'на акк.',
+            en: 'to'
+          },
         }
       },
       get currentLang() {

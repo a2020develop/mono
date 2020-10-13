@@ -11,7 +11,7 @@
               </div>
           </div>
           <div class="code">
-            <qrcode-vue :value="'http://' + host + '/join/' + room" :size="240" level="H"></qrcode-vue>
+            <qrcode-vue :value="'http://' + host + '/#/join/' + room" :size="240" level="H"></qrcode-vue>
           </div>
           <div class="players">
             <v-list subheader two-line>
