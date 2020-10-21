@@ -7,7 +7,7 @@
                 <div class="ico-marg">
                   <v-icon v-anime="{ translateY: -5, duration: 1600, loop: true, direction: 'alternate' }">mdi-account-reactivate</v-icon>
                 </div>
-                <div>{{ translateToLang.waiting4players[currentLang] }}</div>
+                <div>{{ this.$store.getters.t.waiting4players[this.$store.getters.l] }}</div>
               </div>
           </div>
           <div class="code">
@@ -20,12 +20,12 @@
                   <span class="white--text headline fs-20">{{ player.card_holder.substr(0, 1) }}</span>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title v-text="player.card_holder"></v-list-item-title>
+                  <v-list-item-title class="cap" v-text="player.card_holder"></v-list-item-title>
                   <v-list-item-subtitle>
                     <span>
                       <v-icon class="fs-20" color="success">mdi-check</v-icon>
                     </span>
-                    <span>{{ translateToLang.ready_to_play[currentLang] }}</span>
+                    <span>Ready to play</span>
                   </v-list-item-subtitle>
                 </v-list-item-content>
 
@@ -39,8 +39,8 @@
             </v-list>
 
             <div class="start-game">
-              <v-btn depressed v-on:click="startTheGame()" v-if="!checkRoom">{{ translateToLang.start_the_game[currentLang] }}</v-btn>
-              <v-btn depressed v-on:click="startTheGame()" v-else>{{ translateToLang.join_the_game[currentLang] }}</v-btn>
+              <v-btn depressed v-on:click="startTheGame()" v-if="!checkRoom">{{ this.$store.getters.t.start_the_game[this.$store.getters.l] }}</v-btn>
+              <v-btn depressed v-on:click="startTheGame()" v-else>{{ this.$store.getters.t.join_the_game[this.$store.getters.l] }}</v-btn>
             </div>
           </div>
         </div>
@@ -48,8 +48,8 @@
     <div v-else class="invite-players">
       <div>
         <h1>501</h1>
-        <div>{{ translateToLang.err501[currentLang] }}</div>
-        <router-link to="/start"><v-icon class="back-arrow">mdi-arrow-left</v-icon> {{ translateToLang.back[currentLang] }}</router-link>
+        <div>{{ this.$store.getters.t.err501[this.$store.getters.l] }}</div>
+        <router-link to="/start"><v-icon class="back-arrow">mdi-arrow-left</v-icon> {{ this.$store.getters.t.back[this.$store.getters.l] }}</router-link>
       </div>
     </div>
   </div>
@@ -63,7 +63,7 @@ const db = firebase.database()
 export default {
   name: 'InvitePlayers',
   firebase: {
-    players: db.ref().child('players'),
+    players: db.ref().child('rooms').child(localStorage.getItem('room')).child('players'),
     rooms: db.ref().child('rooms')
   },
   components: {
@@ -93,11 +93,11 @@ export default {
       })
     },
     startTheGame() {
-      firebase.database().ref('rooms/' + this.room).update({
+      firebase.database().ref('rooms/' + localStorage.getItem('room')).update({
         is_game_started: 'true'
       })
       
-      this.$router.push('/wallet')
+      this.$router.push('/wallets')
     }
   },
   mounted() {
@@ -115,6 +115,7 @@ export default {
           filtered.push(player)
         }
       }
+      
       return filtered
     },
     checkRoom() {
@@ -141,6 +142,9 @@ export default {
     justify-content: center;
     align-items: center;
     padding: 20px;
+  }
+  .headline{
+    text-transform: capitalize !important;
   }
 
   .invite-players-qr .code{
@@ -194,5 +198,9 @@ export default {
 
   .errortext{
     color: #ff6c6c !important
+  }
+  
+  .invite-players-qr .players{
+    padding: 0 5px !important;
   }
 </style>

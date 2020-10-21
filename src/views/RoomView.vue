@@ -58,7 +58,7 @@ const db = firebase.database()
 export default {
   name: 'RoomView',
   firebase: {
-    players: db.ref().child('players'),
+    players: db.ref().child('rooms').child(localStorage.getItem('room')).child('players'),
     rooms: db.ref().child('rooms')
   },
   data: () => ({    
@@ -69,27 +69,21 @@ export default {
     me: ''
   }),
   methods: {
-    getHost() {
+    getDefaults() {
       this.host = window.location.host
-    },
-    getRoom() {
       this.room = localStorage.getItem('room')
-    },
-    getMe() {
       this.me = localStorage.getItem('player')
     },
     startTheGame() {
-      firebase.database().ref('players/' + localStorage.getItem('player')).update({
+      firebase.database().ref('rooms/' + localStorage.getItem('room') + '/players/' + localStorage.getItem('player')).update({
         room: localStorage.getItem('room')
       })
 
-      this.$router.push('/wallet')
+      this.$router.push('/wallets')
     }
   },
   mounted() {
-    this.getHost()
-    this.getRoom()
-    this.getMe()
+    this.getDefaults()
   },
   computed: {
     filteredPlayers: function () {

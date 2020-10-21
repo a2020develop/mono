@@ -2,19 +2,19 @@
     <div class="new-game">
         <div class="fluid">
             <div class="titled">
-                <h1 class="set-up">{{ translateToLang.lets_set[currentLang] }}</h1>
+                <h1 class="set-up">{{ this.$store.getters.t.lets_set[this.$store.getters.l] }}</h1>
                 <div class="hidden-load" v-if="loading">
                     <v-icon color="primary" v-anime="{ rotate: 1001010, duration: 900000, loop: true, easing: 'linear'}">mdi-loading</v-icon>
                 </div>
             </div>
             <v-text-field
                 v-model="namefield" outlined
-                :label="translateToLang.whats_ur_name[currentLang]"
+                :label="this.$store.getters.t.whats_ur_name[this.$store.getters.l]"
             ></v-text-field>
             <div class="absoluted-apply">
                 <v-btn icon color="primary" v-on:click="joinGame()"><v-icon>mdi-check</v-icon></v-btn>
             </div>
-            <router-link to="/start"><v-icon class="back-arrow">mdi-arrow-left</v-icon> {{ translateToLang.back[currentLang] }}</router-link>
+            <router-link to="/start"><v-icon class="back-arrow">mdi-arrow-left</v-icon> {{ this.$store.getters.t.back[this.$store.getters.l] }}</router-link>
         </div>
     </div>
 </template>
@@ -40,58 +40,18 @@ export default {
         loading: false
     }),
     methods: {
-        joinGame() {
-            this.loading = true
-
-            if(this.namefield != '') {
-                let gameroom = this.getRoom()
-                this.room = gameroom
-
-                let controlling_by = this.createPlayer(this.namefield, gameroom)
-                this.createBankAccount(controlling_by, controlling_by)
-                this.saveLocalConfig()
-
-                firebase.database().ref('players/' + controlling_by).update({
-                    room: gameroom
-                })
-
-                setTimeout(() => { 
-                    this.loading = false;
-                    this.$router.push('/room/' + this.room)
-                }, 2000)
-            } 
-            else { 
-                this.loading = false
-                return 
-            }
-        },
-        getHost() {
-            this.host = window.location.host
-        },
-        getRoom() {
-            return this.$route.params.room
-        },
-        getMe() {
-            this.me = localStorage.getItem('player')
-        },
-        startTheGame() {
-            this.$router.push('/wallet')
-        },
-        saveLocalConfig() {
-            localStorage.setItem('room', this.room)
-            localStorage.setItem('player', this.player)
-        },
         createPlayer(name, room) {
             this.player = this.generateRandom()
-            firebase.database().ref('players/' + this.player).set({
+            firebase.database().ref('rooms/' + localStorage.getItem('room') + '/players/' + this.player).set({
                 id: this.player,
                 card_holder: name,
                 room: room
             })
 
+            localStorage.setItem('player', this.player)
             return this.player
         },
-        createBankAccount(owner_id, controlling_by, account_balance = 5000000) {
+        createBankAccount(owner_id, controlling_by, account_balance) {
             let account = ''
             if(owner_id == controlling_by) {
                 this.bank_account = this.generateRandom()
@@ -100,7 +60,7 @@ export default {
                 account = this.generateRandom()
             }
 
-            firebase.database().ref('bank_accounts/' + account).set({
+            firebase.database().ref('rooms/' + localStorage.getItem('room') + '/bank_accounts/' + account).set({
                 id: account,
                 account_balance: account_balance,
                 account_controlling_by: controlling_by,
@@ -109,6 +69,24 @@ export default {
             })
 
             return account
+        },
+        joinGame() {
+            this.loading = true
+
+            if(this.namefield != '') {
+                localStorage.setItem('room', this.$route.params.room)
+                let controlling_by = this.createPlayer(this.namefield, this.$route.params.room)
+                this.createBankAccount(controlling_by, controlling_by, this.$store.getters.start_money)
+
+                setTimeout(() => { 
+                    this.loading = false
+                    this.$router.push('/room/' + this.$route.params.room)
+                }, 2000)
+            } 
+            else { 
+                this.loading = false
+                return 
+            }
         },
         generateRandom(length = 20) {
             let result = ''

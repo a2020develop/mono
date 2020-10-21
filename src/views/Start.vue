@@ -1,7 +1,7 @@
 <template>
     <div class="start">
         <div class="start--inner">
-            <a>{{ translateToLang.scan_qr[currentLang] }}</a>
+            <a>{{ this.$store.getters.t.scan_qr[this.$store.getters.l] }}</a>
             <div class="connect-to-a-game">
                 <img src="../../public/expl/expl-1.png" class="fluid-img">
                 <img src="../../public/expl/expl-2.png" class="absoluted-expl-1"
@@ -11,7 +11,7 @@
                 <video id="video" width="1" height="1" autoplay></video>
             </div>
             <div class="create-new-game">
-                <router-link to="/create">{{ translateToLang.create_new_game[currentLang] }}</router-link>
+                <router-link to="/create">{{ this.$store.getters.t.create_new_game[this.$store.getters.l] }}</router-link>
             </div>
         </div>
     </div>
@@ -19,9 +19,7 @@
 
 <script>
 export default {
-    data: () => ({}),
-    methods: {},
-    mounted() {}
+    data: () => ({})
 }
 </script>
 

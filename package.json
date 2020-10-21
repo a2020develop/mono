@@ -19,6 +19,7 @@
     "vue-animejs": "^2.1.1",
     "vue-axios": "^3.0.1",
     "vue-carousel": "^0.18.0",
+    "vue-native-notification": "^1.1.1",
     "vue-page-transition": "^0.2.2",
     "vue-router": "^3.4.6",
     "vue-slick-carousel": "^1.0.6",
